@@ -4,7 +4,7 @@ import org.postgis.PGgeometry;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by Knut Johan Hesten on 2016-02-26.
@@ -13,6 +13,9 @@ public class Tables {
 //    private StringBuilder nodes;
 //    private StringBuilder ways;
 //    Stack<String> tableList;
+    private boolean xmlTaggingDone = false;
+    private boolean isSinglePolygon;
+    private Queue<String> xmlTags = new LinkedList<>();
 
     Tables() throws SQLException { //Connection conn, String schemaName, String tableName
 //        this.nodes = new StringBuilder();
@@ -21,7 +24,7 @@ public class Tables {
 //        this.tableList = getListOfTableNames(conn, schemaName);
     }
 
-    void setMinMaxGeometryBounds(Connection conn, String schemaName, String tableName, String geomColumn) throws SQLException {
+    private void setMinMaxGeometryBounds(Connection conn, String schemaName, String tableName, String geomColumn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             String sql =
                     "select max(st_xmax(" + geomColumn + ")), " +
@@ -39,7 +42,31 @@ public class Tables {
         }
     }
 
-    void getTable(Connection conn, String schemaName, String tableName, OsmWriter osmWriter) throws SQLException, IOException {
+    private void writeMapWriterXMLtags(OsmWriter osmWriter) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        if (isSinglePolygon) {
+            sb.append(pois);
+        } else {
+            sb.append(ways);
+        }
+        sb.append(Const.newLine());
+        sb.append(Const.tabCharacter()).append(osmTag)
+                .append(__).append(key)  .append(qt).append(xmlTags.remove()).append(qt)
+                .append(__).append(value).append(qt).append(xmlTags.remove()).append(qt)
+                .append(__).append(zoom) .append(qt).append("17").append(qt)
+                .append(__).append(slash).append(end)
+                ;
+        sb.append(Const.newLine());
+        if (isSinglePolygon) {
+            sb.append(poisEnd);
+        } else {
+            sb.append(waysEnd);
+        }
+        sb.append(Const.newLine());
+        osmWriter.writeBuffered(sb, Const.XML);
+    }
+
+    public void getTable(Connection conn, String schemaName, String tableName, OsmWriter osmWriter) throws SQLException, IOException {
         String schemaTableName = schemaName + "." + tableName;
         String sql = "SELECT COUNT(*) FROM " + schemaTableName;
         int rowCount;
@@ -113,7 +140,12 @@ public class Tables {
                         }
                     }
                     ft.generateXml();
-
+                    if (!xmlTaggingDone) {
+                        this.isSinglePolygon = ft.isSinglePolygon();
+                        this.xmlTags.add(ft.getDrawableTag());
+                        this.xmlTags.add(ft.getTagValue());
+                        this.xmlTaggingDone = true;
+                    }
                     osmWriter.writeBuffered(ft.getNodes(), Const.NODE);
                     osmWriter.writeBuffered(ft.getWays(), Const.WAY);
 
@@ -144,9 +176,23 @@ public class Tables {
 
             }
         }
-        setMinMaxGeometryBounds(conn, schemaName, tableName, geomColumnName);
+        this.setMinMaxGeometryBounds(conn, schemaName, tableName, geomColumnName);
+        this.writeMapWriterXMLtags(osmWriter);
         System.out.println();
     }
+
+    public static final String pois = "<pois>";
+    public static final String poisEnd = "</pois>";
+    public static final String ways = "<ways>";
+    public static final String waysEnd = "</ways>";
+    public static final String osmTag = "<osm-tag";
+    public static final String key = "key=";
+    public static final String value = "value=";
+    public static final String zoom = "zoom-appear=";
+    public static final String qt = "\"";
+    public static final String slash = "/";
+    public static final String end = ">";
+    public static final String __ = " ";
 
 //    public Stack<String> getListOfTableNames() {
 //        return this.tableList;

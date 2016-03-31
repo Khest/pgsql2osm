@@ -12,8 +12,9 @@ public class OsmWriter implements AutoCloseable{
     private final String fileName;
     private final String tempFileNodes = "nodes.tmp";
     private final String tempFileWays = "ways.tmp";
+    private final String xmlFileName = "map.xml";
 
-    private Writer nodeWriter, wayWriter;
+    private Writer nodeWriter, wayWriter, xmlWriter;
 
     private BufferedWriter bufferedWriter;
 
@@ -25,9 +26,11 @@ public class OsmWriter implements AutoCloseable{
 
         this.nodeWriter = new BufferedWriter(new FileWriter(tempFileNodes), bufferSize);
         this.wayWriter = new BufferedWriter(new FileWriter(tempFileWays), bufferSize);
+        this.xmlWriter = new BufferedWriter(new FileWriter(xmlFileName), bufferSize);
 
         deleteFile(tempFileWays);
         deleteFile(tempFileNodes);
+        deleteFile(xmlFileName);
         if (fileExists(fileName) && !deleteFile(fileName)) {
             System.out.println("Unable to delete existing file. Check permissions and try again");
             System.exit(1);
@@ -39,6 +42,7 @@ public class OsmWriter implements AutoCloseable{
         this.writeOsmToDisk(sb, fileName);
         this.sb = new StringBuilder();
 
+        this.writeBuffered(tagFileDeclaration(), Const.XML);
 //        this.sb.delete(0, this.sb.length());
 
     }
@@ -47,11 +51,14 @@ public class OsmWriter implements AutoCloseable{
         switch (type) {
             case Const.NODE:
                 nodeWriter.append(input);
-                nodeWriter.flush();
+//                nodeWriter.flush();
                 break;
             case Const.WAY:
                 wayWriter.append(input);
-                nodeWriter.flush();
+//                nodeWriter.flush();
+                break;
+            case Const.XML:
+                xmlWriter.append(input);
                 break;
         }
     }
@@ -112,13 +119,15 @@ public class OsmWriter implements AutoCloseable{
 
 //            this.writeOsmToDisk(ways, fileName);
             this.writeOsmToDisk(new StringBuilder(this.getEndOfFile()), fileName);
+            this.writeBuffered(getEndOfXml(), Const.XML);
+            this.xmlWriter.close();
         } catch (Exception ex) {
             System.out.printf("Unable to write to disk: ").printf(ex.getMessage());
         }
     }
 
     private String XmlDeclaration() {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Const.newLine();
+        return "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + Const.newLine();
     }
 
     private String OsmDeclaration() {
@@ -143,6 +152,33 @@ public class OsmWriter implements AutoCloseable{
         sb.append(Const.newLine());
         return sb;
     }
+
+    private static StringBuilder tagFileDeclaration() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?> ");
+        sb.append(Const.newLine());
+        sb.append("<tag-mapping xmlns=\"http://mapsforge.org/tag-mapping\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
+        sb.append(Const.newLine());
+        sb.append("xsi:schemaLocation=\"http://mapsforge.org/tag-mapping ../resources/tag-mapping.xsd\" default-zoom-appear=\"16\" ");
+        sb.append(Const.newLine());
+        sb.append("profile-name=\"default-profile\"> ");
+        sb.append(Const.newLine());
+
+        sb.append("<ways>").append(Const.newLine());
+        sb.append("<osm-tag key=\"lock\" value=\"yes\" zoom-appear=\"14\" />").append(Const.newLine());
+        sb.append("<!-- mapsforge artificial tags for land/sea areas, do not remove -->").append(Const.newLine());
+        sb.append("<osm-tag key=\"natural\" value=\"sea\" zoom-appear=\"0\" />").append(Const.newLine());
+        sb.append("<osm-tag key=\"natural\" value=\"nosea\" zoom-appear=\"0\" />").append(Const.newLine());
+        sb.append("</ways>").append(Const.newLine());
+
+        return sb;
+//        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?> " +
+//                "<tag-mapping xmlns=\"http://mapsforge.org/tag-mapping\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+//                "xsi:schemaLocation=\"http://mapsforge.org/tag-mapping ../resources/tag-mapping.xsd\" default-zoom-appear=\"16\" " +
+//                "profile-name=\"default-profile\"> " + Const.newLine();
+    }
+
+    private static StringBuilder getEndOfXml() { return new StringBuilder().append(Const.newLine()).append("</tag-mapping>");}
 
     private String getEndOfFile() {
          return "</osm>";

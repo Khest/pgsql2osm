@@ -24,8 +24,8 @@ public class Feature extends GeomPoints {
         this.nodes = new StringBuilder();
         this.ways = new StringBuilder();
 
-        this.categories = new PriorityQueue<>();
-        this.nodeReferences = new PriorityQueue<>();
+        this.categories = new ArrayDeque<>();
+        this.nodeReferences = new ArrayDeque<>();
     }
 
     public void addCategory(Object value) {
@@ -39,6 +39,10 @@ public class Feature extends GeomPoints {
     public StringBuilder getWays() {
         return this.ways;
     }
+
+    public String getDrawableTag() {return this.drawableTag; }
+
+    public String getTagValue() {return Const.MAINTAGVALUE; }
 
     /**
      * Generates XML based on geometry and tag data herein.
@@ -120,7 +124,7 @@ public class Feature extends GeomPoints {
                 .append(k).append(qt).append(this.drawableTag).append(qt)
                 .append(__)
 //                .append(v).append(qt).append(this.osmCategory.getIdKVPair()[1]).append(qt)
-                .append(v).append(qt).append(Const.MAINTAGVALUE).append(qt)
+                .append(v).append(qt).append(this.getTagValue()).append(qt)
                 .append(slash).append(end)
                 .append(Const.newLine())
         ;

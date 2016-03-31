@@ -32,7 +32,7 @@ public class Main {
         try {
             dbConn dbConn = new dbConn();
             Connection conn = dbConn.getConnection("localhost", "test", "postgres", "lacream");
-            String schemaName = "kombinert_andre";
+            String schemaName = "stedsnavn";
             String fileName = "output.osm";
             Schemas schemas = new Schemas(conn, schemaName);
 

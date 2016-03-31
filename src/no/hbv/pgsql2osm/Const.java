@@ -32,6 +32,7 @@ public class Const {
 
     public static final int NODE = 0;
     public static final int WAY = 1;
+    public static final int XML = 2;
     public static final int MAXROWCOUNT = 100000;
     public static final String MAINTAGVALUE = "test";
 
@@ -51,6 +52,10 @@ public class Const {
     public static String newLine() {
 //        return System.getProperty("line.separator");
         return "\n";
+    }
+
+    public static String tabCharacter() {
+        return "\t";
     }
 
     public static String singleSpace() {
