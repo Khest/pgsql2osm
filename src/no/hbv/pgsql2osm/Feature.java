@@ -12,6 +12,7 @@ public class Feature extends GeomPoints {
     //TODO: Beholde referanse mellom to punkt dersom de danner en uavbrutt linje, men finnes i to ulike rader
     private StringBuilder nodes;
     private StringBuilder ways;
+    private static String tmpInput;
 
 //    private OsmCategory osmCategory;
     private String drawableTag;
@@ -29,7 +30,11 @@ public class Feature extends GeomPoints {
     }
 
     public void addCategory(Object value) {
-        this.categories.add(value.toString());
+        if (value.getClass() == String.class) {
+            this.categories.add(Const.cleanString(value.toString()));
+        } else {
+            this.categories.add(value.toString());
+        }
     }
 
     public StringBuilder getNodes() {

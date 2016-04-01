@@ -1,6 +1,8 @@
 package no.hbv.pgsql2osm;
 
 import java.sql.*;
+import java.time.Duration;
+import java.time.Instant;
 
 public class Main {
 
@@ -32,23 +34,28 @@ public class Main {
         try {
             dbConn dbConn = new dbConn();
             Connection conn = dbConn.getConnection("localhost", "test", "postgres", "lacream");
-            String schemaName = "stedsnavn";
+            String schemaName = "kombinert_andre";
             String fileName = "output.osm";
             Schemas schemas = new Schemas(conn, schemaName);
 
             System.out.printf("Current schema ").printf(schemaName).println();
             try (OsmWriter osmWriter = new OsmWriter(fileName)) {
-                while (!schemas.getListOfTableNames().empty()) {
-//                    OsmWriter2 osmWriter = new OsmWriter2(fileName);
+                Instant start, end, tblStart, tblEnd;
+                start = Instant.now();
+                while (!schemas.empty()) {
+                    tblStart = Instant.now();
                     Tables clt = new Tables();
-                    clt.getTable(conn, schemaName, schemas.getListOfTableNames().pop(), osmWriter);
-//                    osmWriter.writeOsmToDisk(clt.getNodes(), Const.NODE);
-//                    osmWriter.writeOsmToDisk(clt.getWays(), Const.WAY);
-//                    if (osmWriter.sbLength()) System.out.println("sb length warning");
+                    clt.getTable(conn, schemaName, schemas.pop(), osmWriter);
+
                     System.gc();
+
+                    tblEnd = Instant.now();
+                    String message = "Table " + schemas.count() + " of " + schemas.total() + " Time: " + Duration.between(tblStart, tblEnd).toString() + Const.newLine();
+                    System.out.printf(message);
                 }
-//            OsmWriter2 osmWriter2 = new OsmWriter2(fileName);
-//            osmWriter2.writeEOF();
+                end = Instant.now();
+                String message = "Operation completed in " + Duration.between(start, end).toString() + Const.newLine();
+                System.out.printf(message);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
