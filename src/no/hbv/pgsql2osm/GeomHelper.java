@@ -9,7 +9,7 @@ import org.postgis.PGgeometry;
 class GeomHelper {
     static private Double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = 0.0, maxY = 0.0;
     static private long idNode = 0;
-    static private long idWay = 2000000;
+    static private long idWay = 128000000;
     static protected void setMinX(Double minX) {
         if (GeomHelper.minX > minX) {
             GeomHelper.minX = minX;

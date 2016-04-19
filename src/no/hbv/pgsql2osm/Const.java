@@ -55,7 +55,6 @@ public class Const {
     }
 
     public static String newLine() {
-//        return System.getProperty("line.separator");
         return "\n";
     }
 
