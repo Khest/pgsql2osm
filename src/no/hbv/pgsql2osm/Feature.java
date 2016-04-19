@@ -8,7 +8,6 @@ import java.util.*;
  * Created by Knut Johan Hesten on 2016-02-25.
  */
 public class Feature extends GeomPoints {
-    //TODO: Denne skal skille mellom point og multipoint: point skrives direkte til node med tags, multipoint skrives IKKE med tags men tags utgjør en way som forekommer senere i fila
     //TODO: Beholde referanse mellom to punkt dersom de danner en uavbrutt linje, men finnes i to ulike rader
     private StringBuilder nodes;
     private StringBuilder ways;
@@ -174,11 +173,13 @@ abstract class GeomPoints {
     GeomPoints() {}
 
     public String getNodeLat(int position) {
-        return Const.getDf().format(Mercator.yToLat(geom.getGeometry().getPoint(position).getY()));
+        //return Const.getDf().format(Mercator.yToLat(geom.getGeometry().getPoint(position).getY()));
+        return Const.getDf().format(geom.getGeometry().getPoint(position).getY());
     }
 
     public String getNodeLon(int position) {
-        return Const.getDf().format(Mercator.xToLon(geom.getGeometry().getPoint(position).getX()));
+        //return Const.getDf().format(Mercator.xToLon(geom.getGeometry().getPoint(position).getX()));
+        return Const.getDf().format(geom.getGeometry().getPoint(position).getX());
     }
 
     public int count() {

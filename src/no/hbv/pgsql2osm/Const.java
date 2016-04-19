@@ -42,6 +42,8 @@ public class Const {
     public static final String WARNING_NO_TEXT = "String error";
 
     public static final int ARRAYSIZE = 1600000;
+    public static final double MAXPOSITIVELATLON = 180.0;
+    public static final double MAXNEGATIVELATLON = -180.0;
 
     public static Const getInstance() {
         return ourInstance;
@@ -51,7 +53,7 @@ public class Const {
         LocalDateTime date = LocalDateTime.now();
         isoDateTime = date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z";
         maxNodes = Double.valueOf(Const.getProperty("maxnodes"));
-        df = new DecimalFormat("#.00000", new DecimalFormatSymbols(Locale.US));
+        df = new DecimalFormat("##.########", new DecimalFormatSymbols(Locale.US));
     }
 
     public static String newLine() {

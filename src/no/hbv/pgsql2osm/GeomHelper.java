@@ -31,10 +31,14 @@ class GeomHelper {
         }
     }
 
-    public static Double getMinX() { return Mercator.xToLon(minX); }
-    public static Double getMinY() { return Mercator.yToLat(minY); }
-    public static Double getMaxX() { return Mercator.xToLon(maxX); }
-    public static Double getMaxY() { return Mercator.yToLat(maxY); }
+//    public static String getMinX() { return Const.getDf().format(Mercator.xToLon(minX)); }
+//    public static String getMinY() { return Const.getDf().format(Mercator.yToLat(minY)); }
+//    public static String getMaxX() { return Const.getDf().format(Mercator.xToLon(maxX)); }
+//    public static String getMaxY() { return Const.getDf().format(Mercator.yToLat(maxY)); }
+    public static String getMinX() { return Const.getDf().format(minX); }
+    public static String getMinY() { return Const.getDf().format(minY); }
+    public static String getMaxX() { return Const.getDf().format(maxX); }
+    public static String getMaxY() { return Const.getDf().format(maxY); }
 
     static protected long getAndIncrementNodeId() {
         return idNode++;

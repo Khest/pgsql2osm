@@ -1,16 +1,25 @@
 package no.hbv.pgsql2osm;
 
 import java.sql.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) {
         Main main = new Main();
-        main.commandParser();
+        main.commandParser(args);
+        //main.test();
     }
 
-    void commandParser() {
+    void test() {
+        DecimalFormat df = new DecimalFormat("##.########", new DecimalFormatSymbols(Locale.US));
+        System.out.println(df.format(.37464837837373));
+    }
+
+    void commandParser(String[] args) {
 //        try (OsmWriter osmWriter = new OsmWriter("output.osm")){
 
 
@@ -23,7 +32,7 @@ public class Main {
             //TODO get list of schemas
         try {
             dbConn dbConn = new dbConn();
-            Connection conn = dbConn.getConnection("localhost", "test2", "postgres", "lacream");
+            Connection conn = dbConn.getConnection("localhost", "test", "postgres", "lacream");
             String schemaName = "kombinert_andre";
             String fileName = "output.osm";
             Schemas schemas = new Schemas(conn, schemaName);

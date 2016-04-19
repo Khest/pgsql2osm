@@ -53,7 +53,7 @@ public class Tables {
         sb.append(Const.tabCharacter()).append(osmTag)
                 .append(__).append(key)  .append(qt).append(xmlTags.remove()).append(qt)
                 .append(__).append(value).append(qt).append(xmlTags.remove()).append(qt)
-                .append(__).append(zoom) .append(qt).append("17").append(qt)
+                .append(__).append(zoom) .append(qt).append("0").append(qt)
                 .append(__).append(slash).append(end)
                 ;
         sb.append(Const.newLine());
