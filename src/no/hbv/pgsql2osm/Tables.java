@@ -92,7 +92,7 @@ public class Tables {
                 int colCount = metaData.getColumnCount();
 
                 while (rs.next()) {
-                    Feature ft = new Feature(schemaName + "_" + tableName);
+                    Feature ft = new Feature(tableName);
                     currentRowNumber++;
                     System.out.print("\r");
                     System.out.print(currentRowNumber);

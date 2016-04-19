@@ -5,16 +5,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class Main {
-
-
-    // list of <node with id lat lon />
-    // list of <node with id lat lon > - for point
-    //  inside list of <tag k="category" v="value"/>
-    // </node>
-    // list of <way with id> - represents continuous lines
-    //  list of <nd ref="node id"> inside <way> - for each node in line
-    //  after, <tag k="category" v="value"/>
-    // </way>
     public static void main(String[] args) {
         Main main = new Main();
         main.commandParser();
@@ -34,7 +24,7 @@ public class Main {
         try {
             dbConn dbConn = new dbConn();
             Connection conn = dbConn.getConnection("localhost", "test", "postgres", "lacream");
-            String schemaName = "kombinert_andre";
+            String schemaName = "buskerud";
             String fileName = "output.osm";
             Schemas schemas = new Schemas(conn, schemaName);
 
