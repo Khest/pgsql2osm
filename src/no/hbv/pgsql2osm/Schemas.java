@@ -36,6 +36,7 @@ public class Schemas {
             count++;
         }
         this.total = count;
+        this.count = 0;
         if (tablesStack.size() == 0) {
             throw new SQLException("Nothing found for scehma " + schemaName);
         }
@@ -43,7 +44,7 @@ public class Schemas {
     }
 
     public String pop() {
-        this.count--;
+        this.count++;
         return this.tableList.pop();
     }
     public int count() { return this.count; }

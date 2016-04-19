@@ -23,8 +23,8 @@ public class Main {
             //TODO get list of schemas
         try {
             dbConn dbConn = new dbConn();
-            Connection conn = dbConn.getConnection("localhost", "test", "postgres", "lacream");
-            String schemaName = "buskerud";
+            Connection conn = dbConn.getConnection("localhost", "test2", "postgres", "lacream");
+            String schemaName = "kombinert_andre";
             String fileName = "output.osm";
             Schemas schemas = new Schemas(conn, schemaName);
 
@@ -40,7 +40,7 @@ public class Main {
                     System.gc();
 
                     tblEnd = Instant.now();
-                    String message = "Table " + schemas.count() + " of " + schemas.total() + " Time: " + Duration.between(tblStart, tblEnd).toString() + Const.newLine();
+                    String message = "Table " + schemas.count() + " of " + schemas.total() + " completed in " + Duration.between(tblStart, tblEnd).toString() + Const.newLine();
                     System.out.printf(message);
                 }
                 end = Instant.now();
