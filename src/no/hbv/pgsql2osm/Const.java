@@ -34,7 +34,7 @@ public class Const {
     public static final int WAY = 1;
     public static final int XML = 2;
     public static final int MAXROWCOUNT = 100000;
-    public static final String MAINTAGVALUE = "test";
+    public static final String MAINTAGVALUE = "drawable";
     public static final String REPLACE_AMPERSAND = " og ";
     public static final String REPLACE_SLASH = "";
     public static final String REPLACE_LESS_MORE = "";
@@ -44,6 +44,8 @@ public class Const {
     public static final int ARRAYSIZE = 1600000;
     public static final double MAXPOSITIVELATLON = 180.0;
     public static final double MAXNEGATIVELATLON = -180.0;
+
+    public static boolean TREATDECIMALASINT = true;
 
     public static Const getInstance() {
         return ourInstance;

@@ -107,7 +107,11 @@ public class Tables {
                                 //TODO identify double/BigDecimal and see if it is useful
                                 if (rs.getBigDecimal(i) != null) {
                                     ft.addCategory(metaData.getColumnLabel(i));
-                                    ft.addCategory(rs.getBigDecimal(i));
+                                    if (Const.TREATDECIMALASINT) {
+                                        ft.addCategory(Math.floor(rs.getBigDecimal(i).doubleValue()));
+                                    } else {
+                                        ft.addCategory(rs.getBigDecimal(i));
+                                    }
                                 }
 //                                for (int j = 1; j < osmCategory.getNumCat(); j++) {
 //
