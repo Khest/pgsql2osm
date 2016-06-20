@@ -4,6 +4,24 @@ import java.sql.*;
 import java.time.Duration;
 import java.time.Instant;
 
+/**
+ *  pgsql2osm, a tool to convert a database containing geometric data to an osm file
+ * Copyright (C) 2016  Knut Johan Hesten
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
+ */
+
 public class Main {
 
     private static final String ERR_NO_SQL_DRIVER =     "Could not load postgresql driver";
@@ -39,7 +57,7 @@ public class Main {
         // TODO: hook into mapsforge-map-writer to write directly to .map file
         try {
             dbConn dbConn = new dbConn();
-            Connection conn = dbConn.getConnection("localhost", "test", "postgres", "lacream");
+            Connection conn = dbConn.getConnection("localhost", "test", "postgres", " "); //NEED TO SET PASSWORD
 
             String schemaName = "kombinert_andre";
             String fileName = "output.osm";
