@@ -1,27 +1,23 @@
 package no.hbv.pgsql2osm;
 
 import java.sql.*;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Locale;
 
 public class Main {
+
+    private static final String ERR_NO_SQL_DRIVER =     "Could not load postgresql driver";
+    private static final String ERR_GENERAL_SQL_ERROR = "SQL error";
+
     public static void main(String[] args) {
         Main main = new Main();
         main.commandParser(args);
-        //main.test();
     }
 
-    void test() {
-        DecimalFormat df = new DecimalFormat("##.########", new DecimalFormatSymbols(Locale.US));
-        System.out.println(df.format(.37464837837373));
-    }
-
-    void commandParser(String[] args) {
+    private void commandParser(String[] args) {
 //        try (OsmWriter osmWriter = new OsmWriter("output.osm")){
 
+        //TODO: CHECK if there exists tool that does what this does
 
             //Todo handles input and sends messages further up the event chain
 
@@ -30,11 +26,24 @@ public class Main {
 
 
             //TODO get list of schemas
+
+        //TODO check if output is write to osm - ALWAYS write to osm
+        //TODO get input filename OR get default if not set
+
+        //TODO: Keep reference between two sets of points if they are part of a unbroken linestring
+
+
+        // TODO: Future ideas:
+        // TODO: specify schemas and exclude schemas
+        // TODO: specify tables and exclude tables (mutually exclusive option with previous
+        // TODO: hook into mapsforge-map-writer to write directly to .map file
         try {
             dbConn dbConn = new dbConn();
             Connection conn = dbConn.getConnection("localhost", "test", "postgres", "lacream");
+
             String schemaName = "kombinert_andre";
             String fileName = "output.osm";
+
             Schemas schemas = new Schemas(conn, schemaName);
 
             System.out.printf("Current schema ").printf(schemaName).println();
@@ -62,21 +71,7 @@ public class Main {
             System.out.println(ex.getMessage());
         }
 
-//            Tables clt = new Tables(conn, schemaName);
-//            System.out.printf("Current schema ").printf(schemaName).println();
-//            while (!clt.getListOfTableNames().empty()) {
-//                clt.getTable(conn, schemaName, clt.getListOfTableNames().pop(), osmWriter);
-//                osmWriter.writeOsmToDisk(clt.getNodes(), Const.NODE);
-//                osmWriter.writeOsmToDisk(clt.getWays(), Const.WAY);
-//                clt.cleanup();
-//            }
-            //TODO check if output is write to osm - ALWAYS write to osm
-            //TODO get input filename OR get default if not set
-//        } catch (SQLException sqlEx) {
-//            System.out.printf(sqlEx.getMessage()).println();
-//        } catch (Exception ex) {
-//            System.out.printf(ex.getMessage()).println();
-//        }
+
 
     }
 
@@ -93,21 +88,24 @@ public class Main {
 
     }
 
-    public class dbConn {
-        public Connection getConnection(String address, String dbName, String userName, String password) {
+    private class dbConn {
+        Connection getConnection(String address, String dbName, String userName, String password) {
             try {
                 Class.forName("org.postgresql.Driver");
                 return DriverManager.getConnection("jdbc:postgresql://" + address + "/" + dbName, userName, password);
             } catch (ClassNotFoundException e) {
-                System.out.println("Could not load postgresql driver");
+                System.out.println(ERR_NO_SQL_DRIVER);
             } catch (SQLException e) {
-                System.out.println("SQL error");
+                System.out.println(ERR_GENERAL_SQL_ERROR);
             }
             return null;
         }
     }
 
     private Arguments decodeCommands(String[] args) throws Exception{
+        // TODO: 2016-06-08 https://commons.apache.org/proper/commons-cli/usage.html
+        // TODO: 2016-06-08 ALTERNATIVE: http://jcommander.org/
+        // TODO: 2016-06-08 address, database, username, password, schema name, help text
         if (args.length == 0) {
             printHelp();
         }
@@ -131,6 +129,7 @@ public class Main {
                         ar.setSchemaName(args[i + 1]);
                         break;
                     case "-h":
+                    case "--help":
                         printHelp();
                         break;
                     //TODO: Invalid argument handling
@@ -144,12 +143,12 @@ public class Main {
         } catch (IllegalArgumentException ex) {
             printHelp();
         }
-        return null;
+        return ar;
     }
 
     private void printHelp() {
         String helpText =
-                "pgsql2osm version " + Const.PGSQL2OSMVER + " Created by " + Const.COPYRIGHT + Const.newLine()
+                "pgsql2osm version " + Const.VERSION + " Created by " + Const.COPYRIGHT + Const.newLine()
 
                 ;
     }

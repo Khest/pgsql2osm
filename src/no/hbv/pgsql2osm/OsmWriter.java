@@ -4,33 +4,26 @@ import java.io.*;
 
 /**
  * Created by Knut Johan Hesten on 2016-02-26.
+ * Last updated by Knut Johan Hesten on 2016-06-08
  */
-public class OsmWriter implements AutoCloseable{
+class OsmWriter implements AutoCloseable{
     private StringBuilder sb;
-//    private StringBuilder ways;
-    private final int bufferSize = 16384;
+    private static final int bufferSize = 16384;
     private final String fileName;
-    private final String tempFileNodes = "nodes.tmp";
-    private final String tempFileWays = "ways.tmp";
-    private final String xmlFileName = "map.xml";
 
-    private Writer nodeWriter, wayWriter, xmlWriter;
-
-    private BufferedWriter bufferedWriter;
+    private final Writer nodeWriter, wayWriter, xmlWriter;
 
     OsmWriter(String fileName) throws IOException{
         this.fileName = fileName;
         this.sb = new StringBuilder();
-//        this.ways = new StringBuilder();
-//        FileWriter fwNodes = new FileWriter(tempFileNodes);
 
-        this.nodeWriter = new BufferedWriter(new FileWriter(tempFileNodes), bufferSize);
-        this.wayWriter = new BufferedWriter(new FileWriter(tempFileWays), bufferSize);
-        this.xmlWriter = new BufferedWriter(new FileWriter(xmlFileName), bufferSize);
+        this.nodeWriter = new BufferedWriter(new FileWriter(Const.TEMP_FILE_NODES), bufferSize);
+        this.wayWriter = new BufferedWriter(new FileWriter(Const.TEMP_FILE_WAYS), bufferSize);
+        this.xmlWriter = new BufferedWriter(new FileWriter(Const.XML_FILE_NAME), bufferSize);
 
-        deleteFile(tempFileWays);
-        deleteFile(tempFileNodes);
-        deleteFile(xmlFileName);
+        deleteFile(Const.TEMP_FILE_WAYS);
+        deleteFile(Const.TEMP_FILE_NODES);
+        deleteFile(Const.XML_FILE_NAME);
         if (fileExists(fileName) && !deleteFile(fileName)) {
             System.out.println("Unable to delete existing file. Check permissions and try again");
             System.exit(1);
@@ -43,15 +36,12 @@ public class OsmWriter implements AutoCloseable{
         this.sb = new StringBuilder();
 
         this.writeBuffered(tagFileDeclaration(), Const.XML);
-//        this.sb.delete(0, this.sb.length());
-
     }
 
-    public void writeBuffered(StringBuilder input, int type) throws IOException {
+    void writeBuffered(StringBuilder input, int type) throws IOException {
         switch (type) {
             case Const.NODE:
                 nodeWriter.append(input);
-//                nodeWriter.flush();
                 break;
             case Const.WAY:
                 wayWriter.append(input);
@@ -63,11 +53,12 @@ public class OsmWriter implements AutoCloseable{
         }
     }
 
+    // TODO: 2016-06-08 unused
     public void writeOsmToDisk(StringBuilder input, int type) {
         if (type == Const.NODE) {
-            this.writeOsmToDisk(input, tempFileNodes);
+            this.writeOsmToDisk(input, Const.TEMP_FILE_NODES);
         } else if (type == Const.WAY) {
-            this.writeOsmToDisk(input, tempFileWays);
+            this.writeOsmToDisk(input, Const.TEMP_FILE_WAYS);
         }
     }
 
@@ -85,12 +76,12 @@ public class OsmWriter implements AutoCloseable{
     }
 
     private void combineTempFiles() throws Exception {
-        try (BufferedReader br = new BufferedReader(new FileReader(tempFileNodes))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Const.TEMP_FILE_NODES))) {
             writeFromInputStream(br);
         } catch (Exception ex) {
             throw new Exception(ex);
         }
-        try (BufferedReader br = new BufferedReader(new FileReader(tempFileWays))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Const.TEMP_FILE_WAYS))) {
             writeFromInputStream(br);
         } catch (Exception ex) {
             throw new Exception(ex);
@@ -131,9 +122,11 @@ public class OsmWriter implements AutoCloseable{
     }
 
     private String OsmDeclaration() {
-        return "<osm version=\"" + Const.OSMVERSION + "\" generator=\"" + Const.GENERATOR + "\">" + Const.newLine();
+        return "<osm version=\"" + Const.OSM_VERSION + "\" generator=\"" + Const.GENERATOR + "\">" + Const.newLine();
     }
 
+
+    @SuppressWarnings("SpellCheckingInspection")
     private StringBuilder setBounds() {
         StringBuilder sb = new StringBuilder();
         sb.append(" <bounds ");
@@ -153,7 +146,7 @@ public class OsmWriter implements AutoCloseable{
         return sb;
     }
 
-    private static StringBuilder tagFileDeclaration() {
+    private StringBuilder tagFileDeclaration() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?> ");
         sb.append(Const.newLine());
@@ -172,10 +165,6 @@ public class OsmWriter implements AutoCloseable{
         sb.append("</ways>").append(Const.newLine());
 
         return sb;
-//        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?> " +
-//                "<tag-mapping xmlns=\"http://mapsforge.org/tag-mapping\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
-//                "xsi:schemaLocation=\"http://mapsforge.org/tag-mapping ../resources/tag-mapping.xsd\" default-zoom-appear=\"16\" " +
-//                "profile-name=\"default-profile\"> " + Const.newLine();
     }
 
     private static StringBuilder getEndOfXml() { return new StringBuilder().append(Const.newLine()).append("</tag-mapping>");}
@@ -192,13 +181,10 @@ public class OsmWriter implements AutoCloseable{
         return new File(fileName).exists();
     }
 
-    public boolean sbLength() {
-        return this.sb.length() >= (Integer.MAX_VALUE - 20000);
-    }
-
     @Override
     public void close() throws Exception {
         this.writeEOF();
-        if (fileExists(tempFileNodes) && deleteFile(tempFileNodes) && fileExists(tempFileWays) && deleteFile(tempFileWays)) System.out.println("Temporary files deleted successfully");
+        if (fileExists(Const.TEMP_FILE_NODES) && deleteFile(Const.TEMP_FILE_NODES) && fileExists(Const.TEMP_FILE_WAYS) && deleteFile(Const.TEMP_FILE_WAYS))
+            System.out.println("Temporary files deleted successfully");
     }
 }

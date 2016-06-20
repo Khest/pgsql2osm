@@ -4,6 +4,7 @@ package no.hbv.pgsql2osm;
  * Created by Knut Johan Hesten on 2016-02-25.
  */
 public enum OsmCategory {
+    // TODO: 2016-06-08 marked for delete
     DEFAULT(true),
     DYBDEAREAL(true, "dybdeverdi"),
     DYBDEKONTUR(true, "dybdeverdi"),

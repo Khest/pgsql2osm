@@ -6,9 +6,9 @@ import java.util.*;
 
 /**
  * Created by Knut Johan Hesten on 2016-02-25.
+ * Last updated by Knut Johan Hesten on 2016-06-20
  */
-public class Feature extends GeomPoints {
-    //TODO: Beholde referanse mellom to punkt dersom de danner en uavbrutt linje, men finnes i to ulike rader
+class Feature extends GeomPoints {
     private StringBuilder nodes;
     private StringBuilder ways;
     private static String tmpInput;
@@ -28,7 +28,7 @@ public class Feature extends GeomPoints {
         this.nodeReferences = new ArrayDeque<>();
     }
 
-    public void addCategory(Object value) {
+    void addCategory(Object value) {
         if (value.getClass() == String.class) {
             this.categories.add(Const.cleanString(value.toString()));
         } else {
@@ -36,23 +36,21 @@ public class Feature extends GeomPoints {
         }
     }
 
-    public StringBuilder getNodes() {
-        return this.nodes;
-    }
+    StringBuilder getNodes() { return this.nodes; }
 
-    public StringBuilder getWays() {
+    StringBuilder getWays() {
         return this.ways;
     }
 
-    public String getDrawableTag() {return this.drawableTag; }
+    String getDrawableTag() {return this.drawableTag; }
 
-    public String getTagValue() {return Const.MAINTAGVALUE; }
+    String getTagValue() {return Const.MAIN_TAG_VALUE; }
 
     /**
      * Generates XML based on geometry and tag data herein.
      * Only call after the values have been completely loaded.
      */
-    public void generateXml() {
+    void generateXml() {
         for (int i = 0; i < super.count(); i++) {
             this.nodes
                     .append(node)
@@ -151,7 +149,6 @@ public class Feature extends GeomPoints {
     private static final String id = "id=";
     private static final String lat = "lat=";
     private static final String lon = "lon=";
-    private static final String visible = "visible=\"true\"";
     private static final String slash = "/";
     private static final String end = ">";
     private static final String tag = "<tag";
@@ -172,37 +169,35 @@ abstract class GeomPoints {
 
     GeomPoints() {}
 
-    public String getNodeLat(int position) {
-        //return Const.getDf().format(Mercator.yToLat(geom.getGeometry().getPoint(position).getY()));
+    String getNodeLat(int position) {
         return Const.getDf().format(geom.getGeometry().getPoint(position).getY());
     }
 
-    public String getNodeLon(int position) {
-        //return Const.getDf().format(Mercator.xToLon(geom.getGeometry().getPoint(position).getX()));
+    String getNodeLon(int position) {
         return Const.getDf().format(geom.getGeometry().getPoint(position).getX());
     }
 
-    public int count() {
+    int count() {
         return geom.getGeometry().numPoints();
     }
 
-    public boolean isSinglePolygon() {
+    boolean isSinglePolygon() {
         return this.count() == 1;
     }
 
-    public String getNodeId() {
+    String getNodeId() {
         return String.valueOf(nodeId);
     }
 
-    public void incrementNodeId() {
+    void incrementNodeId() {
         this.nodeId = GeomHelper.getAndIncrementNodeId();
     }
 
-    public String getWayId() {
+    String getWayId() {
         return String.valueOf(GeomHelper.getAndIncrementWayId());
     }
 
-    public void setGeometry(PGgeometry geom) {
+    void setGeometry(PGgeometry geom) {
         this.nodeId = GeomHelper.getAndIncrementNodeId();
         this.geom = geom;
     }

@@ -1,55 +1,52 @@
 package no.hbv.pgsql2osm;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
 
 /**
  * Created by Knut Johan Hesten on 2016-02-25.
+ * Last updated by Knut Johan Hesten on 2016-06-08
  */
-public class Const {
-    private static Const ourInstance = new Const();
-    private static String isoDateTime;
-    private static Double maxNodes;
-    private static DecimalFormat df;
+class Const {
+    private static String           isoDateTime;
+    private static Double           maxNodes;
+    private static DecimalFormat    df;
 
-    public static final String SQLINTEGER =  "java.lang.Integer";
-    public static final String SQLDECIMAL = "java.math.BigDecimal";
-    public static final String SQLSTRING = "java.lang.String";
-    public static final String SQLGEOM = "org.postgis.PGgeometry";
+    static final String             SQL_INTEGER =  "java.lang.Integer";
+    static final String             SQL_DECIMAL = "java.math.BigDecimal";
+    static final String             SQL_STRING = "java.lang.String";
+    static final String             SQL_GEOMETRY = "org.postgis.PGgeometry";
 
-    public static final String OSMVERSION = Const.getProperty("osmversion");
-    public static final String GENERATOR = Const.getProperty("generator");
-    public static final String PGSQL2OSMVER = Const.getProperty("pgsql2osmver");
-    public static final String COPYRIGHT = Const.getProperty("copyright");
+    static final String             OSM_VERSION = Const.getProperty("osmversion");
+    static final String             GENERATOR = Const.getProperty("generator");
+    static final String             VERSION = Const.getProperty("pgsql2osmver");
+    static final String             COPYRIGHT = Const.getProperty("creator");
 
-    public static final int NODE = 0;
-    public static final int WAY = 1;
-    public static final int XML = 2;
-    public static final int MAXROWCOUNT = 100000;
-    public static final String MAINTAGVALUE = "drawable";
-    public static final String REPLACE_AMPERSAND = " og ";
-    public static final String REPLACE_SLASH = "";
-    public static final String REPLACE_LESS_MORE = "";
-    public static final String REPLACE_INVALID_SYMBOL = "";
-    public static final String WARNING_NO_TEXT = "String error";
+    static final String             TEMP_FILE_WAYS = "ways.tmp";
+    static final String             TEMP_FILE_NODES = "nodes.tmp";
+    static final String             XML_FILE_NAME = "map.xml";
 
-    public static final int ARRAYSIZE = 1600000;
-    public static final double MAXPOSITIVELATLON = 180.0;
-    public static final double MAXNEGATIVELATLON = -180.0;
+    static final int                NODE = 0;
+    static final int                WAY = 1;
+    static final int                XML = 2;
+    private static final int        MAXROWCOUNT = 100000;
+    static final String             MAIN_TAG_VALUE = "drawable";
+    private static final String     REPLACE_AMPERSAND = " og ";
+    private static final String     REPLACE_SLASH = "";
+    private static final String     REPLACE_LESS_MORE = "";
+    private static final String     REPLACE_INVALID_SYMBOL = "";
+    private static final String     WARNING_NO_TEXT = "String error";
 
-    public static boolean TREATDECIMALASINT = true;
+    private static final int        ARRAYSIZE = 1600000;
+    private static final double     MAXPOSITIVELATLON = 180.0;
+    private static final double     MAXNEGATIVELATLON = -180.0;
 
-    public static Const getInstance() {
-        return ourInstance;
-    }
+    static boolean                  TREAT_DECIMAL_AS_INTEGER = true;
 
     private Const() {
         LocalDateTime date = LocalDateTime.now();
@@ -58,15 +55,15 @@ public class Const {
         df = new DecimalFormat("##.########", new DecimalFormatSymbols(Locale.US));
     }
 
-    public static String newLine() {
+    static String newLine() {
         return "\n";
     }
 
-    public static String tabCharacter() {
+    static String tabCharacter() {
         return "\t";
     }
 
-    public static String cleanString(String s) {
+    static String cleanString(String s) {
         s = s
                 .replaceAll("\"", Const.REPLACE_SLASH)
                 .replaceAll("/", Const.REPLACE_SLASH)
@@ -82,15 +79,13 @@ public class Const {
         return s;
     }
 
-    public static String getProperty(String propertyName) {
+    private static String getProperty(String propertyName) {
         String filename = "config.properties";
         Properties prop = new Properties();
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream is = Const.class.getResourceAsStream(filename);
             prop.load(is);
-//            InputStream input = Const.class.getClassLoader().getResourceAsStream(filename);
-//            prop.load(input);
             return prop.getProperty(propertyName);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -98,15 +93,15 @@ public class Const {
         return null;
     }
 
-    public static Double getMaxNodes() {
+    static Double getMaxNodes() {
         return maxNodes;
     }
 
-    public static String getTimeStamp() {
+    static String getTimeStamp() {
         return isoDateTime;
     }
 
-    public static DecimalFormat getDf() {
+    static DecimalFormat getDf() {
         return df;
     }
 }

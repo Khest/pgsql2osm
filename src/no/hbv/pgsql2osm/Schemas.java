@@ -7,15 +7,16 @@ import java.sql.SQLException;
 import java.util.Stack;
 
 /**
- * Created by Dakh on 2016-03-14.
+ * Created by Knut Johan Hesten on 2016-03-14.
+ * Last updated by Knut Johan Hesten on 2016-06-08
  */
-public class Schemas {
+class Schemas {
 
     private Stack<String> tableList;
     private int count;
     private int total;
 
-    public Schemas(Connection conn, String schemaName) throws SQLException {
+    Schemas(Connection conn, String schemaName) throws SQLException {
         this.tableList = getListOfTableNames(conn, schemaName);
     }
 
@@ -43,13 +44,13 @@ public class Schemas {
         return tablesStack;
     }
 
-    public String pop() {
+    String pop() {
         this.count++;
         return this.tableList.pop();
     }
-    public int count() { return this.count; }
+    int count() { return this.count; }
 
-    public int total() {return this.total; }
+    int total() {return this.total; }
 
-    public boolean empty() {return this.tableList.empty(); }
+    boolean empty() {return this.tableList.empty(); }
 }
